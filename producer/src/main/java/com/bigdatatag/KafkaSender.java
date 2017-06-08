@@ -14,7 +14,7 @@ public class KafkaSender {
     //TODO Producer can change
     public static void Sender(String server,String topic,String data) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", server);
         props.put("acks", "all");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class);
 

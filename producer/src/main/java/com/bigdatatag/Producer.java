@@ -1,21 +1,17 @@
 package com.bigdatatag;
 
-import java.util.Properties;
-
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-
 /**
  * Created by safak on 6/8/17.
  */
 public class Producer {
-    //TODO parameters required
     public static void main(String[] args) throws Exception {
+        if (args.length < 3) {
+            System.err.println("Args are wrong");
+            System.exit(1);
+        }
+
         while (true) {
-            //TODO 8GB file is big!!!
-            String csvFile = "/home/safak/measurements.csv";
-            CSVUtils.getAndSendData(csvFile, "localhost:9092", "test");
+            CSVUtils.getAndSendData(args[0], args[1], args[2]);
         }
     }
 }
