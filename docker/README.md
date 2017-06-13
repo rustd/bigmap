@@ -1,7 +1,3 @@
-**BigMap**
-
-Bigmap, is all about streaming approaches in big data domain.
-
 For running docker file, you need to install Docker
 
 **For building docker file :**
