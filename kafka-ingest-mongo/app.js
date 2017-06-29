@@ -8,8 +8,6 @@ const factory = new KafkaStreams(config.stream);
 
 const stream = factory.getKStream(config.topic);
 
-
-
 stream.forEach(message => {
     processMessage(message);
 })
@@ -24,14 +22,12 @@ stream.start().then(() => {
 function processMessage(message) {
     console.log(message);
     var doc = JSON.parse(message.value);
-
-    var id = [ doc.DeviceID, doc.CapturedTime].join('-')
-    doc['_id'] = id;
-    console.log("Will be using key " + id);
-    saveDoc(doc);
+    doc['_id'] = [ doc.DeviceID, doc.CapturedTime].join('-');
+    saveDoc('measurement', doc);
 }
 
 function saveDoc(collectionName, doc) {
+    console.log(doc);
 //     MongoClient.connect(url, function (err, db) {
 //         assert.equal(null, err);
 //         console.log("Connected successfully to server");
