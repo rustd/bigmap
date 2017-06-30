@@ -13,8 +13,8 @@ stream.forEach(message => {
 })
 
 stream.start().then(() => {
-        console.log("Stream::start ok");
-    },
+    console.log("Stream::start ok");
+},
     error => {
         console.error("Stream::start failed: " + error);
     });
@@ -22,21 +22,22 @@ stream.start().then(() => {
 function processMessage(message) {
     console.log(message);
     var doc = JSON.parse(message.value);
-    doc['_id'] = [ doc.DeviceID, doc.CapturedTime].join('-');
+    doc['_id'] = [doc.DeviceID, doc.CapturedTime].join('-');
     saveDoc('measurement', doc);
 }
 
+
 function saveDoc(collectionName, doc) {
-    console.log(doc);
-//     MongoClient.connect(url, function (err, db) {
-//         assert.equal(null, err);
-//         console.log("Connected successfully to server");
-
-//         db.collection(collectionName).insertOne(doc, function (err, r) {
-//             assert.equal(null, err);
-//             assert.equal(1, r.insertedCount);
-//             db.close();
-//         });
-
-//    }
+    MongoClient.connect(config.mongo.url)
+        .then(db => {
+            db.collection(config.mongo.sinkCollection)
+                .updateOne({ _id: doc._id }, doc, { upsert: true })
+                .then(r => {
+                    db.close();
+                    console.log(r.result);
+                });
+        }).catch(err => {
+            console.log(err);
+            throw err;
+        });
 }
