@@ -6,7 +6,7 @@ For running docker file, you need to install Docker
 
 **For running it :**
 
-`docker run -it -d -p 9092:9092 -p 2181:2181 -p 4040:4040 bigmap`
+`docker run -it -d -p 9092:9092 -p 2181:2181 -p 4040:4040 -p 27017:27017 bigmap`
 
 For attaching to terminal in container, you need to check container's id and use the attach command.
 
@@ -14,4 +14,4 @@ For attaching to terminal in container, you need to check container's id and use
 
 `docker attach id`
 
-This version has running Zookeeper, Kafka and Spark. When it starts, it creates a topic named "test"
+This version has running MongoDB, Zookeeper, Kafka and Spark. When it starts, it creates a topic named "test"

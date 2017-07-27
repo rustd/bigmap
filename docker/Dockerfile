@@ -11,16 +11,21 @@ RUN mv /opt/spark-2.1.1-bin-hadoop2.7 /opt/spark
 RUN mv /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg
 RUN mkdir /opt/bigmap
 RUN mkdir /opt/bigmap/producer
+RUN yum -y install epel-release; yum clean all
+RUN yum -y install mongodb mongodb-server; yum clean all
+RUN mkdir -p /data/db
 
 ENV PATH /opt/kafka/bin:/opt/zookeeper/bin:/opt/spark/bin:$PATH
 
 EXPOSE 9092
 EXPOSE 2181
 EXPOSE 4040
+EXPOSE 27017
 
 CMD echo "*******start******" ;\
 zkServer.sh start ;\
 `nohup /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties >> /opt/kafka/out.txt &` ;\
 echo "kafka started" ;\
 kafka-topics.sh --create --topic test --zookeeper localhost:2181 --replication-factor 1 --partitions 1 ;\
+`nohup mongod >> mongod_out.txt` ; \
 /bin/bash
