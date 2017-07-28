@@ -18,6 +18,7 @@ For attaching to terminal in container, you need to check container's id and use
 
 `docker attach id`
 
+
 This version has running Node, MongoDB, Zookeeper, Kafka and Spark. 
 When it starts, it creates a topic named "measurement"
 
