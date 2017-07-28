@@ -22,7 +22,7 @@ stream.start().then(() => {
 function processMessage(message) {
     console.log(message);
     var doc = JSON.parse(message.value);
-    doc['_id'] = [doc.DeviceID, doc.CapturedTime].join('-');
+    doc['_id'] = [doc.deviceID, doc.capturedTime].join('-');
     saveDoc('measurement', doc);
 }
 
