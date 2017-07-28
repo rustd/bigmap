@@ -18,4 +18,10 @@ For attaching to terminal in container, you need to check container's id and use
 
 `docker attach id`
 
-This version has running Zookeeper, Kafka and Spark. When it starts, it creates a topic named "test"
+This version has running Node, MongoDB, Zookeeper, Kafka and Spark. 
+When it starts, it creates a topic named "measurement"
+
+We are using SafeCast data. ( https://blog.safecast.org/data/ )
+
+On this producer, we are only serving 300000 lines of data. Total size is over 8 GB. 
+If you want to test with all data, refer the instructions on docker readme.

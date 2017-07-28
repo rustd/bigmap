@@ -2,7 +2,7 @@
 
 ## Kafka Ingest MongoDB
 
-1. Ingest events of interest (Measurments)
+1. Ingest events of interest (Measurements of Safecast data)
 1. Cold storage in MongoDB
 1. Kafka stream topic already defines the "schema", since the message published to it is in a JSON format  that is defined by the Producer.
 

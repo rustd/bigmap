@@ -26,7 +26,7 @@ const config = {
             requireAcks: 0,
         }
     },
-    topic: "safecast",
+    topic: "measurement",
     mongo:{
         url:'mongodb://localhost/bigdatatag',
         sinkCollection: 'measurements'
