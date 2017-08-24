@@ -17,13 +17,16 @@ public class CSVUtils {
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DEFAULT_QUOTE = '"';
 
-    public static void getAndSendData(String filePath,String server,String topic) throws Exception {
+    public static void getAndSendData(String filePath, String server, String topic) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
 
         int lineCounter = 0;
         Scanner scanner = new Scanner(new File(filePath));
         while (scanner.hasNext()) {
+            if (lineCounter == 0) {
+                continue;
+            }
             List<String> line = parseLine(scanner.nextLine());
             Measurement measurement = new Measurement();
             measurement.setCapturedTime(line.get(0));
@@ -45,7 +48,7 @@ public class CSVUtils {
             System.out.println(measurement.toString());
 
             String jsonInString = mapper.writeValueAsString(measurement);
-            KafkaSender.Sender(server,topic,jsonInString);
+            KafkaSender.Sender(server, topic, jsonInString);
 
         }
         scanner.close();
