@@ -1,7 +1,8 @@
 package com.bigdatatag
 
 import kafka.serializer.StringDecoder
-import org.apache.spark.SparkConf
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.SQLContext
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
@@ -42,6 +43,15 @@ object Streaming extends Serializable {
 
     ssc.start()
     ssc.awaitTermination()
+  }
+
+  object SQLContextSingleton {
+    @transient private var instance: SQLContext = _
+
+    def getInstance(sparkContext: SparkContext): SQLContext = {
+      if (instance == null) instance = new SQLContext(sparkContext)
+      instance
+    }
   }
 
 }
