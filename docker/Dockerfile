@@ -1,5 +1,6 @@
 FROM centos:7
 RUN yum -y install epel-release
+RUN rpm -ivh https://kojipkgs.fedoraproject.org//packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm
 RUN yum -y install wget maven git java-1.8.0-openjdk-devel net-tools mongodb mongodb-server nodejs npm
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz | tar -xzf - -C /opt
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/kafka/0.10.2.1/kafka_2.11-0.10.2.1.tgz | tar -xzf - -C /opt
