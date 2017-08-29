@@ -1,6 +1,8 @@
 FROM centos:7
 RUN yum -y install epel-release
-RUN yum -y install wget maven git java-1.8.0-openjdk-devel net-tools mongodb mongodb-server nodejs npm
+RUN rpm -ivh https://kojipkgs.fedoraproject.org//packages/http-parser/2.7.1/3.el7/x86_64/http-parser-2.7.1-3.el7.x86_64.rpm 
+RUN rpm -ivh https://kojipkgs.fedoraproject.org//packages/http-parser/2.7.1/3.el7/x86_64/http-parser-devel-2.7.1-3.el7.x86_64.rpm 
+RUN yum -y install wget make gcc* git java-1.8.0-openjdk-devel net-tools mongodb mongodb-server nodejs-devel npm tmux
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz | tar -xzf - -C /opt
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/kafka/0.10.2.1/kafka_2.11-0.10.2.1.tgz | tar -xzf - -C /opt
 RUN wget -q -O - ftp://ftp.task.gda.pl/pub/www/apache/dist/spark/spark-2.1.1/spark-2.1.1-bin-hadoop2.7.tgz | tar -xzf - -C /opt
@@ -12,16 +14,18 @@ RUN mkdir -p /data/db
 RUN mkdir -p /data/fromSensor
 RUN curl "https://api.safecast.org/system/measurements.csv" -s 2>&1 | head -300000 >> /data/fromSensor/measurements.txt
 RUN git clone -b development https://github.com/sskapci/bigmap.git /opt/bigmap
+RUN yum -y install maven
 RUN mvn clean package -f /opt/bigmap/pom.xml
 WORKDIR /opt/bigmap/kafka-ingest-mongo
 RUN npm install
 WORKDIR /
 
-ENV PATH /opt/kafka/bin:/opt/zookeeper/bin:/opt/spark/bin:$PATH
+ENV PATH /opt/kafka/bin:/opt/zookeeper/bin:/opt/spark/bin:/opt/maven/bin:$PATH
 
-EXPOSE 9092
 EXPOSE 2181
 EXPOSE 4040
+EXPOSE 8888
+EXPOSE 9092
 EXPOSE 27017
 
 CMD echo "*******start******" ;\
