@@ -8,12 +8,12 @@
 1.  Problem description
 1.  Description of project
 1.  Why we chose what tech 
-    1.  Spark - Safak 
-    1.  Mongo -    
-    1. Kafka - Safak 
-    1. Docker - Safak 
-1. Implementation – Nuri for Mongo / Spark and Kafka  
-1  Next steps -  Pranav 
+    1. Spark
+    1. Mongo    
+    1. Kafka
+    1. Docker 
+    1. Kafka-MongoDB connector
+1. Implementation  
 
 ## Big Data Landscape 
 
