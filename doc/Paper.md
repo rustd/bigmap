@@ -73,8 +73,9 @@ The messages are saved one at a time into MongoDB. It is trivial to have the con
 # Appendix
 ## Data Flow Diagram
 [Online sequence diagram][3]
-<link rel="stylesheet" href="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.css"/>
-<script src="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.css">
+<script src="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.js">
+</script>
 <script type="text/javascript">
 mermaid.initialize({startOnLoad:true});
 </script>
