@@ -23,9 +23,13 @@
 
 ## Problem description
 
+
 ## Description of project
 
-## Why we chose what tech 
+## Architecture Component Choices 
+When it comes to choosing the major architecture components, we had many offerings to choose from. This is great, because it means the market and community are supported by many options.It bodes well for the maturity and oncoming innovation in the field. Invariably, some choices offer wider flexibility, different cost structure, and better fit for some solutions - never universally one-size-fits all.
+
+One concern was about the multitude of components we need. Reducing cost and complexity help both rapid development, as well as dev-ops and long term support efforts. To that end, we questioned our choices at every step to consider not only if the component fits, but also whether it is a result of inertia or "automatic" choice vs. a conscious cost-benefit choice. While it is certain that some choices are influenced by our familiarity or comfort level with some technologies, we need not shy away from tried-and-true solutions.
 ### Spark 
 
 ### MongoDB
