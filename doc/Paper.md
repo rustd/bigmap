@@ -26,10 +26,19 @@
 
 ## Description of project
 
-## Architecture Component Choices 
+### Architecture Component Choices 
 When it comes to choosing the major architecture components, we had many offerings to choose from. This is great, because it means the market and community are supported by many options.It bodes well for the maturity and oncoming innovation in the field. Invariably, some choices offer wider flexibility, different cost structure, and better fit for some solutions - never universally one-size-fits all.
 
 One concern was about the multitude of components we need. Reducing cost and complexity help both rapid development, as well as dev-ops and long term support efforts. To that end, we questioned our choices at every step to consider not only if the component fits, but also whether it is a result of inertia or "automatic" choice vs. a conscious cost-benefit choice. While it is certain that some choices are influenced by our familiarity or comfort level with some technologies, we need not shy away from tried-and-true solutions.
+
+### Schema Considerations
+Data is at the core of this project, and data needs to be understood in order to derive value. There was an early concern we had to deal with here: Schema. In what format would data be first introduced into the system? In what format should it be stored? In what format can current and future clients expect to access the data?
+
+We discussed several concepts: Schema On Read, Schema On Write, and their variants. Since this is an IoT exercise at core, the data coming from field devices had an inherent structure (or schema) already. With that understanding in mind, there was no particular advantage in storing the data in HDFS or any other storage as "raw". We interpret the serialization protocol as schema as well, and the notion of "unknown data to be figured out later" was therefore not necessary. This realization led us to directly ingest and transform source data into Kafka. Should source IoT schema change at some point, that piece of the system would need to be reworked, but historic data would remain in it's original format.
+
+Consuming data streams from Kafka presented similar choices. We opted to consume readings as individual line-item structure, with flat fields. Since we use MongoDB to store the data structure, it is in the connector that we would chose the destination cold-path schema for the data. MongoDB allows arbitrary data structure, so again we have the ability to revisit the schema should source data change. However, especially in IoT where devices are deployed once and updated rarely, such schema changes are not expected to be frequent, and can be mitigated at the public API level.
+
+
 ### Spark 
 
 ### MongoDB
