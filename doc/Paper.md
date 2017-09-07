@@ -102,34 +102,8 @@ Diagram editor [here][3].
 
 <!-- Mermaid diagram source  -->
 
-<script >
-sequenceDiagram
-Sensor ->> Sensor: Read Radiation
-opt Online
-  Sensor ->> Cloud Storage: Send Readings
-end
-opt Offline
-  Sensor --x Cloud Storage: Manual upload
-end
 
-Kafka -->Cloud Storage: Load Readings
-
-Kafka ->> Kafka: Expose Stream
-
-Kafka ->> MongoDB: Connector /  ETL
-
-Spark  -->> Kafka: Real Time Analytics
-
-Spark  -->> MongoDB: Cold Path Analytics
-
-Spark --x MongoDB: Save Learned Results
-
-MongoDB --X Visualization : Read / Display
-
-</script>
-
-
-
+<!-- Links -->
 [1]:https://docs.mongodb.com/manual/administration/production-notes
 
 [2]:http://mongodb.github.io/node-mongodb-native/2.2/api/Collection.html#insertMany
