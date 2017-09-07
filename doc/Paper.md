@@ -26,8 +26,16 @@
 
 ## Description of project
 
+### Big Data Source
+How big should our data source be? Certainly large enough to pose a scale problem at some point. Certainly it has to have either exceed or show potential for exceeding thresholds of arity, cardinality, or both.
+A common choice is Twitter streams. We considered the three V: Volume, Velocity, Variety. Our solution should be able to address big data along the axis of at least 2 if not all V's.
+
+We chose to use an IoT type source. IoT characteristics naturally supply volume and velocity. This is because the multitude of sources and the frequency of data adds up quickly. Variety in IoT is typically less pronounced. Over time, fixed-deployments may remain operational while new devices change schema or data structures. However it is less likely that _unknown_ or _surprising_ data variety will exist, because device deployment can be made in a planned fashion.
+
+For our project, we chose to use [SafeCast.org's][4] data set. [SafeCast][4] is a wonderful IoT project that collects radiation information form open sourced IoT devices. Those IoT devices were voluntarily made and or deployed by the community and the data produced was collected and made public under open source as well. Having an readily available, well defined, large data set set us free to focus on the platform and processing rather than the "first mile" of collecting IoT information.  
+
 ### Architecture Component Choices 
-When it comes to choosing the major architecture components, we had many offerings to choose from. This is great, because it means the market and community are supported by many options.It bodes well for the maturity and oncoming innovation in the field. Invariably, some choices offer wider flexibility, different cost structure, and better fit for some solutions - never universally one-size-fits all.
+When it comes to choosing the major architecture components, we had many offerings to choose from. This is great, because it means the market and community are supported by many options. It bodes well for the maturity and oncoming innovation in the field. Invariably, some choices offer wider flexibility, different cost structure, and better fit for some solutions - never universally one-size-fits all.
 
 One concern was about the multitude of components we need. Reducing cost and complexity help both rapid development, as well as dev-ops and long term support efforts. To that end, we questioned our choices at every step to consider not only if the component fits, but also whether it is a result of inertia or "automatic" choice vs. a conscious cost-benefit choice. While it is certain that some choices are influenced by our familiarity or comfort level with some technologies, we need not shy away from tried-and-true solutions.
 
@@ -85,15 +93,16 @@ The messages are saved one at a time into MongoDB. It is trivial to have the con
 ----
 # Appendix
 ## Data Flow Diagram
-[Online sequence diagram][3]
-<link rel="stylesheet" href="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.css">
-<script src="https://unpkg.com/mermaid@7.0.8/dist/mermaid.min.js">
-</script>
-<script type="text/javascript">
-mermaid.initialize({startOnLoad:true});
-</script>
 
-<div class="mermaid">
+Data diagram below shows the flow sequence between main components in this project.
+
+<img src="sequence-diagram.svg"/>
+
+Diagram editor [here][3]. 
+
+<!-- Mermaid diagram source  -->
+
+<script >
 sequenceDiagram
 Sensor ->> Sensor: Read Radiation
 opt Online
@@ -117,10 +126,14 @@ Spark --x MongoDB: Save Learned Results
 
 MongoDB --X Visualization : Read / Display
 
-</div>
+</script>
 
-----
+
 
 [1]:https://docs.mongodb.com/manual/administration/production-notes
+
 [2]:http://mongodb.github.io/node-mongodb-native/2.2/api/Collection.html#insertMany
+
 [3]:https://mermaidjs.github.io/mermaid-live-editor/#/edit/c2VxdWVuY2VEaWFncmFtClNlbnNvciAtPj4gU2Vuc29yOiBSZWFkIFJhZGlhdGlvbgpvcHQgT25saW5lCiAgU2Vuc29yIC0+PiBDbG91ZCBTdG9yYWdlOiBTZW5kIFJlYWRpbmdzCmVuZApvcHQgT2ZmbGluZQogIFNlbnNvciAtLXggQ2xvdWQgU3RvcmFnZTogTWFudWFsIHVwbG9hZAplbmQKCkthZmthIC0tPkNsb3VkIFN0b3JhZ2U6IExvYWQgUmVhZGluZ3MKCkthZmthIC0+PiBLYWZrYTogRXhwb3NlIFN0cmVhbQoKS2Fma2EgLT4+IE1vbmdvREI6IENvbm5lY3RvciAvICBFVEwKClNwYXJrICAtLT4+IEthZmthOiBSZWFsIFRpbWUgQW5hbHl0aWNzCgpTcGFyayAgLS0+PiBNb25nb0RCOiBDb2xkIFBhdGggQW5hbHl0aWNzCgpTcGFyayAtLXggTW9uZ29EQjogU2F2ZSBMZWFybmVkIFJlc3VsdHMKCk1vbmdvREIgLS1YIFZpc3VhbGl6YXRpb24gOiBSZWFkIC8gRGlzcGxheQo=
+
+[4]:https://safecast.org
