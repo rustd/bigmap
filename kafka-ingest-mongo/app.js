@@ -24,10 +24,10 @@ function processMessage(message) {
     var doc = JSON.parse(message.value);
     var generatedId="";
     if ((doc.deviceID !== undefined) && (doc.deviceID !== null)) {
-        generatedId= [Math.floor((Math.random() * 100 + 1)), doc.capturedTime].join('-');
+        generatedId=[doc.deviceID, doc.capturedTime].join('-');
     }
     else {
-        generatedId=[doc.deviceID, doc.capturedTime].join('-');
+        generatedId= ["D", doc.capturedTime].join('-');
     }
     doc['_id'] = generatedId;
     saveDoc('measurement', doc);
