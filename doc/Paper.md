@@ -1,4 +1,3 @@
-
 # BigMap 
 
 ## Outline
