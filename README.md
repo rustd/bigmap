@@ -1,4 +1,4 @@
-**BigMap**
+**BigMap** https://travis-ci.org/sskapci/bigmap.svg?branch=master
 
 Bigmap, is all about streaming approaches in big data domain.
 
