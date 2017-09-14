@@ -25,6 +25,7 @@ public class CSVUtils {
         Scanner scanner = new Scanner(new File(filePath));
         while (scanner.hasNext()) {
             if (lineCounter == 0) {
+                lineCounter++;
                 continue;
             }
             List<String> line = parseLine(scanner.nextLine());
