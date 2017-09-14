@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sskapci/bigmap.svg?branch=development)](https://travis-ci.org/sskapci/bigmap)
+
 **BigMap**
 
 Bigmap, is all about streaming approaches in big data domain.
