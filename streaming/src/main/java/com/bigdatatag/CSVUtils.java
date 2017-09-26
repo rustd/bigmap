@@ -4,55 +4,38 @@ package com.bigdatatag;
  * Created by safak on 6/8/17.
  */
 
-import com.bigdatatag.entitiy.Measurement;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
+import com.bigdatatag.entity.Measurement;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CSVUtils {
 
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DEFAULT_QUOTE = '"';
 
-    public static void getAndSendData(String filePath, String server, String topic) throws Exception {
+    public static Measurement parseCsvLine(String incomingLine) throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
+        List<String> line = parseLine(incomingLine);
+        Measurement measurement = new Measurement();
+        measurement.setCapturedTime(line.get(0));
+        measurement.setLatitude(parseDouble(line.get(1)));
+        measurement.setLongitude(parseDouble(line.get(2)));
+        measurement.setValue(parseDouble(line.get(3)));
+        measurement.setUnit(line.get(4));
+        measurement.setLocationName(line.get(5));
+        measurement.setDeviceID(line.get(6));
+        measurement.setMD5Sum(line.get(7));
+        measurement.setHeight(parseDouble(line.get(8)));
+        measurement.setSurface(line.get(9));
+        measurement.setRadiation(line.get(10));
+        measurement.setUploadedTime(line.get(11));
+        measurement.setLoaderID(line.get(12));
 
-        int lineCounter = 0;
-        Scanner scanner = new Scanner(new File(filePath));
-        while (scanner.hasNext()) {
-
-            List<String> line = parseLine(scanner.nextLine());
-            Measurement measurement = new Measurement();
-            measurement.setCapturedTime(line.get(0));
-            measurement.setLatitude(line.get(1));
-            measurement.setLongitude(line.get(2));
-            measurement.setValue(line.get(3));
-            measurement.setUnit(line.get(4));
-            measurement.setLocationName(line.get(5));
-            measurement.setDeviceID(line.get(6));
-            measurement.setMD5Sum(line.get(7));
-            measurement.setHeight(line.get(8));
-            measurement.setSurface(line.get(9));
-            measurement.setRadiation(line.get(10));
-            measurement.setUploadedTime(line.get(11));
-            measurement.setLoaderID(line.get(12));
-
-            lineCounter++;
-            System.out.println(lineCounter);
-            System.out.println(measurement.toString());
-
-            if (!measurement.getCapturedTime().equals("Captured Time")) {
-                String jsonInString = mapper.writeValueAsString(measurement);
-                KafkaSender.Sender(server, topic, jsonInString);
-            }
-
-        }
-        scanner.close();
+        return measurement;
     }
+
 
     public static List<String> parseLine(String cvsLine) {
         return parseLine(cvsLine, DEFAULT_SEPARATOR, DEFAULT_QUOTE);
@@ -144,6 +127,16 @@ public class CSVUtils {
         result.add(curVal.toString());
 
         return result;
+    }
+
+    static double parseDouble(String strNumber) {
+        if (strNumber != null && strNumber.length() > 0) {
+            try {
+                return Double.parseDouble(strNumber);
+            } catch (Exception e) {
+                return 0;
+            }
+        } else return 0;
     }
 
 }

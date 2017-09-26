@@ -22,14 +22,7 @@ stream.start().then(() => {
 function processMessage(message) {
     console.log(message);
     var doc = JSON.parse(message.value);
-    var generatedId="";
-    if ((doc.deviceID !== undefined) && (doc.deviceID !== null)) {
-        generatedId=[doc.deviceID, doc.capturedTime].join('-');
-    }
-    else {
-        generatedId= ["D", doc.capturedTime].join('-');
-    }
-    doc['_id'] = generatedId;
+    doc['_id'] = [doc.deviceID, doc.capturedTime].join('-');
     saveDoc('measurement', doc);
 }
 
