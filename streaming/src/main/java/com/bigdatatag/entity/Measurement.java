@@ -9,14 +9,14 @@ public class Measurement implements Serializable {
     private static final long serialVersionUID = -2983675472826134176L;
 
     private String CapturedTime;
-    private Double Latitude;
-    private Double Longitude;
-    private Double Value;
+    private String Latitude;
+    private String Longitude;
+    private String Value;
     private String Unit;
     private String LocationName;
     private String DeviceID;
     private String MD5Sum;
-    private Double Height;
+    private String Height;
     private String Surface;
     private String Radiation;
     private String UploadedTime;
@@ -30,27 +30,27 @@ public class Measurement implements Serializable {
         CapturedTime = capturedTime;
     }
 
-    public Double getLatitude() {
+    public String getLatitude() {
         return Latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(String latitude) {
         Latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public String getLongitude() {
         return Longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(String longitude) {
         Longitude = longitude;
     }
 
-    public Double getValue() {
+    public String getValue() {
         return Value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(String value) {
         Value = value;
     }
 
@@ -86,11 +86,11 @@ public class Measurement implements Serializable {
         this.MD5Sum = MD5Sum;
     }
 
-    public Double getHeight() {
+    public String getHeight() {
         return Height;
     }
 
-    public void setHeight(Double height) {
+    public void setHeight(String height) {
         Height = height;
     }
 

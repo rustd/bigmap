@@ -20,14 +20,14 @@ public class CSVUtils {
         List<String> line = parseLine(incomingLine);
         Measurement measurement = new Measurement();
         measurement.setCapturedTime(line.get(0));
-        measurement.setLatitude(parseDouble(line.get(1)));
-        measurement.setLongitude(parseDouble(line.get(2)));
-        measurement.setValue(parseDouble(line.get(3)));
+        measurement.setLatitude(line.get(1));
+        measurement.setLongitude(line.get(2));
+        measurement.setValue(line.get(3));
         measurement.setUnit(line.get(4));
         measurement.setLocationName(line.get(5));
         measurement.setDeviceID(line.get(6));
         measurement.setMD5Sum(line.get(7));
-        measurement.setHeight(parseDouble(line.get(8)));
+        measurement.setHeight(line.get(8));
         measurement.setSurface(line.get(9));
         measurement.setRadiation(line.get(10));
         measurement.setUploadedTime(line.get(11));
@@ -127,16 +127,6 @@ public class CSVUtils {
         result.add(curVal.toString());
 
         return result;
-    }
-
-    static double parseDouble(String strNumber) {
-        if (strNumber != null && strNumber.length() > 0) {
-            try {
-                return Double.parseDouble(strNumber);
-            } catch (Exception e) {
-                return 0;
-            }
-        } else return 0;
     }
 
 }

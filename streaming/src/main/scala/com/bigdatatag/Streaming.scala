@@ -1,18 +1,13 @@
 package com.bigdatatag
 
-import com.bigdatatag.entity.Measurement
-import kafka.serializer.StringDecoder
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.spark.mllib.clustering.StreamingKMeans
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
-import org.apache.spark.mllib.clustering.{KMeans, KMeansModel}
+import org.apache.spark.mllib.clustering.KMeans
 import org.apache.spark.mllib.linalg.Vectors
 
 
@@ -54,10 +49,8 @@ object Streaming extends Serializable {
     val dropHeader = trainingData.filter(row => row != header)
 
     val parsedtrainingData = dropHeader.map(CSVUtils.parseCsvLine).filter(f => f.getUnit.equals("cpm"))
-    //TODO DEBUG
-    parsedtrainingData.foreach(println)
 
-    val vectorTrainingData = parsedtrainingData.map(z => Vectors.dense(z.getLatitude, z.getLongitude, z.getValue, z.getHeight))
+    val vectorTrainingData = parsedtrainingData.map(z => Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))
 
     val numClusters = 7
     val numIterations = 10
@@ -77,7 +70,7 @@ object Streaming extends Serializable {
         val filteredMeasurementRDD = measurementRDD.filter(f => f.getUnit.equals("cpm"))
 
         val result = filteredMeasurementRDD.map(z => (z.getDeviceID + "-" + z.getCapturedTime
-          , clusters.predict(Vectors.dense(z.getLatitude, z.getLongitude, z.getValue, z.getHeight))))
+          , clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
 
         //TODO DEBUG
         result.foreach(println)
@@ -89,6 +82,10 @@ object Streaming extends Serializable {
     ssc.awaitTermination()
   }
 
+  def parseToDouble(s: String):Double = try { s.toDouble } catch { case _ => 0.0 }
+
+
+  // SqlContext hasn't been used in the project but this is a good way to use it in Streaming jobs
   object SQLContextSingleton {
     @transient private var instance: SQLContext = _
 
