@@ -9,6 +9,9 @@ import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.mllib.clustering.KMeans
 import org.apache.spark.mllib.linalg.Vectors
+import com.mongodb.spark._
+import com.mongodb.spark.config.WriteConfig
+import org.bson.Document
 
 
 object Streaming extends Serializable {
@@ -75,6 +78,9 @@ object Streaming extends Serializable {
         //TODO DEBUG
         result.foreach(println)
 
+        result.map(z => Document.parse("{\"_id\":\"" + z._1 +
+          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> "mongodb://127.0.0.1:27017/bigdatatag.measurement")))
+
       }
     })
 
@@ -82,8 +88,11 @@ object Streaming extends Serializable {
     ssc.awaitTermination()
   }
 
-  def parseToDouble(s: String):Double = try { s.toDouble } catch { case _ => 0.0 }
-
+  def parseToDouble(s: String): Double = try {
+    s.toDouble
+  } catch {
+    case _: NumberFormatException => 0.0
+  }
 
   // SqlContext hasn't been used in the project but this is a good way to use it in Streaming jobs
   object SQLContextSingleton {
