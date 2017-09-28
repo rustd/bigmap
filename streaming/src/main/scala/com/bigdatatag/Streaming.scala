@@ -20,7 +20,7 @@ object Streaming extends Serializable {
 
   def main(args: Array[String]) {
 
-    val Array(brokers: String, topics: String, trainingfile: String,mongoAddress:String ) = args
+    val Array(brokers: String, topics: String, trainingfile: String, mongoAddress: String) = args
 
 
     // Create context with 1 second batch interval
@@ -58,7 +58,10 @@ object Streaming extends Serializable {
     val numIterations = 10
     val clusters = KMeans.train(vectorTrainingData, numClusters, numIterations)
 
-    //TODO save cluster centers to MongoDB
+    val clusterCenters = clusters.clusterCenters
+    val clusterCentersJson = clusterCenters.map(a => Document.parse(a.toJson))
+    val clusterCentersRdd = ssc.sparkContext.parallelize(clusterCentersJson)
+    clusterCentersRdd.saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusterCenters"))))
 
 
     kafkaStream.foreachRDD((rdd, time) => {
@@ -66,16 +69,13 @@ object Streaming extends Serializable {
       if (!rdd.isEmpty()) {
         val measurementRDD = rdd.map(z => JsonParser.parseJson(z.value()))
 
-        //TODO DEBUG
-        measurementRDD.take(5).foreach(println)
-
         val filteredMeasurementRDD = measurementRDD.filter(f => f.getUnit.equals("cpm"))
 
         val result = filteredMeasurementRDD.map(z => (z.getDeviceID + "-" + z.getCapturedTime
           , clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
 
         result.map(z => Document.parse("{\"_id\":\"" + z._1 +
-          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress)))
+          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusters"))))
 
       }
     })
@@ -84,6 +84,7 @@ object Streaming extends Serializable {
     ssc.awaitTermination()
   }
 
+  //This method for parsing string to double
   def parseToDouble(s: String): Double = try {
     s.toDouble
   } catch {

@@ -35,5 +35,6 @@ echo "kafka started" ;\
 kafka-topics.sh --create --topic measurement --zookeeper localhost:2181 --replication-factor 1 --partitions 1 ;\
 `nohup mongod --smallfiles >> mongod_out.txt &` ; \
 `nohup java -jar /opt/bigmap/producer/target/producer-1.0-SNAPSHOT.jar /data/fromSensor/measurements.txt localhost:9092 measurement >> producer_out.txt &`;\
+`nohup /opt/spark/bin/spark-submit --master local[*] --class com.bigdatatag.Streaming streaming-1.0-SNAPSHOT-jar-with-dependencies.jar localhost:9092 measurement /data/fromSensor/measurements.txt mongodb://127.0.0.1:27017 >> spark_out.txt &`;\
 `nohup node /opt/bigmap/kafka-ingest-mongo/app.js >> node_out.txt &` ; \
 /bin/bash
