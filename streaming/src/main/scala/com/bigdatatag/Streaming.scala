@@ -20,7 +20,7 @@ object Streaming extends Serializable {
 
   def main(args: Array[String]) {
 
-    val Array(brokers: String, topics: String) = args
+    val Array(brokers: String, topics: String, trainingfile: String,mongoAddress:String ) = args
 
 
     // Create context with 1 second batch interval
@@ -45,8 +45,7 @@ object Streaming extends Serializable {
 
 
     // Load and parse the data
-    //TODO change to args
-    val trainingData = ssc.sparkContext.textFile("/data/fromSensor/measurements.txt")
+    val trainingData = ssc.sparkContext.textFile(trainingfile)
 
     val header = trainingData.first()
     val dropHeader = trainingData.filter(row => row != header)
@@ -75,11 +74,8 @@ object Streaming extends Serializable {
         val result = filteredMeasurementRDD.map(z => (z.getDeviceID + "-" + z.getCapturedTime
           , clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
 
-        //TODO DEBUG
-        result.foreach(println)
-
         result.map(z => Document.parse("{\"_id\":\"" + z._1 +
-          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> "mongodb://127.0.0.1:27017/bigdatatag.measurement")))
+          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress)))
 
       }
     })
