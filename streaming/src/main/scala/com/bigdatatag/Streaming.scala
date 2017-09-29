@@ -45,12 +45,6 @@ object Streaming extends Serializable {
     )
 
 
-    // Load and parse the data
-    //val trainingData = ssc.sparkContext.textFile(trainingfile)
-
-    //val header = trainingData.first()
-    //val dropHeader = trainingData.filter(row => row != header)
-
     val parsedData = CSVUtils.getData(trainingfile).asScala
 
     val parsedDataRDD = ssc.sparkContext.makeRDD(parsedData)
