@@ -3,7 +3,7 @@ package com.bigdatatag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.bigdatatag.entity.Measurement;
+import com.bigdatatag.streamingEntity.Measurement;
 
 public class JsonParser {
     public static Measurement parseJson(String line) throws Exception {

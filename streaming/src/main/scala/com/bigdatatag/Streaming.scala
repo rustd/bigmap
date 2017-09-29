@@ -12,6 +12,7 @@ import org.apache.spark.mllib.linalg.Vectors
 import com.mongodb.spark._
 import com.mongodb.spark.config.WriteConfig
 import org.bson.Document
+import scala.collection.JavaConverters._
 
 
 object Streaming extends Serializable {
@@ -45,12 +46,16 @@ object Streaming extends Serializable {
 
 
     // Load and parse the data
-    val trainingData = ssc.sparkContext.textFile(trainingfile)
+    //val trainingData = ssc.sparkContext.textFile(trainingfile)
 
-    val header = trainingData.first()
-    val dropHeader = trainingData.filter(row => row != header)
+    //val header = trainingData.first()
+    //val dropHeader = trainingData.filter(row => row != header)
 
-    val parsedtrainingData = dropHeader.map(CSVUtils.parseCsvLine).filter(f => f.getUnit.equals("cpm"))
+    val parsedData = CSVUtils.getData(trainingfile).asScala
+
+    val parsedDataRDD = ssc.sparkContext.makeRDD(parsedData)
+
+    val parsedtrainingData = parsedDataRDD.filter(f => f.getUnit.equals("cpm"))
 
     val vectorTrainingData = parsedtrainingData.map(z => Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))
 

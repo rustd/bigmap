@@ -1,13 +1,9 @@
-package com.bigdatatag.entity;
-
-import java.io.Serializable;
+package com.bigdatatag.producerEntity;
 
 /**
  * Created by safak on 6/8/17.
  */
-public class Measurement implements Serializable {
-    private static final long serialVersionUID = -2983675472826134176L;
-
+public class Measurement {
     private String CapturedTime;
     private String Latitude;
     private String Longitude;
@@ -131,4 +127,3 @@ public class Measurement implements Serializable {
         return "Measurement{"+getCapturedTime() +"}";
     }
 }
-

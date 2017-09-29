@@ -5,37 +5,59 @@ package com.bigdatatag;
  */
 
 
-import com.bigdatatag.entity.Measurement;
+import com.bigdatatag.streamingEntity.Measurement;
+import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class CSVUtils {
 
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DEFAULT_QUOTE = '"';
 
-    public static Measurement parseCsvLine(String incomingLine) throws Exception {
+    public static List<Measurement> getData(String filePath) throws Exception {
 
-        List<String> line = parseLine(incomingLine);
-        Measurement measurement = new Measurement();
-        measurement.setCapturedTime(line.get(0));
-        measurement.setLatitude(line.get(1));
-        measurement.setLongitude(line.get(2));
-        measurement.setValue(line.get(3));
-        measurement.setUnit(line.get(4));
-        measurement.setLocationName(line.get(5));
-        measurement.setDeviceID(line.get(6));
-        measurement.setMD5Sum(line.get(7));
-        measurement.setHeight(line.get(8));
-        measurement.setSurface(line.get(9));
-        measurement.setRadiation(line.get(10));
-        measurement.setUploadedTime(line.get(11));
-        measurement.setLoaderID(line.get(12));
 
-        return measurement;
+        List<Measurement> measurementList = new ArrayList<Measurement>();
+
+        Scanner scanner = new Scanner(new File(filePath));
+        while (scanner.hasNext()) {
+            String scannedLine = scanner.nextLine();
+
+            int count = StringUtils.countMatches(scannedLine, "\"");
+
+            if (count % 2 != 0) {
+                scannedLine += " " + scanner.nextLine();
+            }
+
+            List<String> line = parseLine(scannedLine);
+            Measurement measurement = new Measurement();
+            measurement.setCapturedTime(line.get(0));
+            measurement.setLatitude(line.get(1));
+            measurement.setLongitude(line.get(2));
+            measurement.setValue(line.get(3));
+            measurement.setUnit(line.get(4));
+            measurement.setLocationName(line.get(5));
+            measurement.setDeviceID(line.get(6));
+            measurement.setMD5Sum(line.get(7));
+            measurement.setHeight(line.get(8));
+            measurement.setSurface(line.get(9));
+            measurement.setRadiation(line.get(10));
+            measurement.setUploadedTime(line.get(11));
+            measurement.setLoaderID(line.get(12));
+
+
+            if (!measurement.getCapturedTime().equals("Captured Time")) {
+                measurementList.add(measurement);
+            }
+        }
+        scanner.close();
+
+        return measurementList;
     }
-
 
     public static List<String> parseLine(String cvsLine) {
         return parseLine(cvsLine, DEFAULT_SEPARATOR, DEFAULT_QUOTE);

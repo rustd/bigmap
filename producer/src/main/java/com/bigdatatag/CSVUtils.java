@@ -4,8 +4,9 @@ package com.bigdatatag;
  * Created by safak on 6/8/17.
  */
 
-import com.bigdatatag.entitiy.Measurement;
+import com.bigdatatag.producerEntity.Measurement;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +26,15 @@ public class CSVUtils {
         Scanner scanner = new Scanner(new File(filePath));
         while (scanner.hasNext()) {
 
-            List<String> line = parseLine(scanner.nextLine());
+            String scannedLine = scanner.nextLine();
+
+            int count = StringUtils.countMatches(scannedLine, "\"");
+
+            if (count % 2 != 0) {
+                scannedLine += " " + scanner.nextLine();
+            }
+
+            List<String> line = parseLine(scannedLine);
             Measurement measurement = new Measurement();
             measurement.setCapturedTime(line.get(0));
             measurement.setLatitude(line.get(1));
