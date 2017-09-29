@@ -4,9 +4,9 @@ package com.bigdatatag;
  * Created by safak on 6/8/17.
  */
 
-import com.bigdatatag.producerEntity.Measurement;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
+
+import com.bigdatatag.streamingEntity.Measurement;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,21 +18,19 @@ public class CSVUtils {
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DEFAULT_QUOTE = '"';
 
-    public static void getAndSendData(String filePath, String server, String topic) throws Exception {
+    public static List<Measurement> getData(String filePath) throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
 
-        int lineCounter = 0;
+        List<Measurement> measurementList = new ArrayList<Measurement>();
+
         Scanner scanner = new Scanner(new File(filePath));
         while (scanner.hasNext()) {
-
             String scannedLine = scanner.nextLine();
 
             int count = StringUtils.countMatches(scannedLine, "\"");
 
             if (count % 2 != 0) {
                 scannedLine += " " + scanner.nextLine();
-
             }
 
             List<String> line = parseLine(scannedLine);
@@ -51,17 +49,14 @@ public class CSVUtils {
             measurement.setUploadedTime(line.get(11));
             measurement.setLoaderID(line.get(12));
 
-            lineCounter++;
-            System.out.println(lineCounter);
-            System.out.println(measurement.toString());
 
             if (!measurement.getCapturedTime().equals("Captured Time")) {
-                String jsonInString = mapper.writeValueAsString(measurement);
-                KafkaSender.Sender(server, topic, jsonInString);
+                measurementList.add(measurement);
             }
-
         }
         scanner.close();
+
+        return measurementList;
     }
 
     public static List<String> parseLine(String cvsLine) {

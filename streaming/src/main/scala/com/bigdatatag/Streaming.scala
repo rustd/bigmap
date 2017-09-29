@@ -1,10 +1,19 @@
 package com.bigdatatag
 
-import kafka.serializer.StringDecoder
+
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vectors
+import com.mongodb.spark._
+import com.mongodb.spark.config.WriteConfig
+import org.bson.Document
+import scala.collection.JavaConverters._
 
 
 object Streaming extends Serializable {
@@ -13,7 +22,7 @@ object Streaming extends Serializable {
 
   def main(args: Array[String]) {
 
-    val Array(brokers: String, topics: String) = args
+    val Array(brokers: String, topics: String, trainingfile: String, mongoAddress: String) = args
 
 
     // Create context with 1 second batch interval
@@ -24,20 +33,51 @@ object Streaming extends Serializable {
 
     // Create direct kafka stream with brokers and topics
     val topicsSet = topics.split(",").toSet
-    val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
+    val kafkaParams = Map[String, Object]("bootstrap.servers" -> brokers,
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer],
+      "group.id" -> "stream")
 
     // Create a new stream which can decode byte arrays.
-    val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+    val kafkaStream = KafkaUtils.createDirectStream[String, String](
       ssc,
-      kafkaParams,
-      topicsSet)
+      PreferConsistent,
+      Subscribe[String, String](topicsSet, kafkaParams)
+    )
+
+
+    val parsedData = CSVUtils.getData(trainingfile).asScala
+
+    val parsedDataRDD = ssc.sparkContext.makeRDD(parsedData)
+
+    val parsedtrainingData = parsedDataRDD.filter(f => f.getUnit.equals("cpm"))
+
+    val vectorTrainingData = parsedtrainingData.map(z => Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))
+
+    val numClusters = 7
+    val numIterations = 10
+    val clusters = KMeans.train(vectorTrainingData, numClusters, numIterations)
+
+    val clusterCenters = clusters.clusterCenters
+    val clusterCentersJson = clusterCenters.map(a => Document.parse(a.toJson))
+    val clusterCentersRdd = ssc.sparkContext.parallelize(clusterCentersJson)
+    clusterCentersRdd.saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusterCenters"))))
+
 
 
     kafkaStream.foreachRDD((rdd, time) => {
 
       if (!rdd.isEmpty()) {
-        rdd.map(z => println(z))
-        println("+++++++++++++" + rdd.count())
+        val measurementRDD = rdd.map(z => JsonParser.parseJson(z.value()))
+
+        val filteredMeasurementRDD = measurementRDD.filter(f => f.getUnit.equals("cpm"))
+
+        val result = filteredMeasurementRDD.map(z => (z.getDeviceID + "-" + z.getCapturedTime
+          , clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
+
+        result.map(z => Document.parse("{\"_id\":\"" + z._1 +
+          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusters"))))
+
       }
     })
 
@@ -45,6 +85,14 @@ object Streaming extends Serializable {
     ssc.awaitTermination()
   }
 
+  //This method for parsing string to double
+  def parseToDouble(s: String): Double = try {
+    s.toDouble
+  } catch {
+    case _: NumberFormatException => 0.0
+  }
+
+  // SqlContext hasn't been used in the project but this is a good way to use it in Streaming jobs
   object SQLContextSingleton {
     @transient private var instance: SQLContext = _
 

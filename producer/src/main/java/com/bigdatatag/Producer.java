@@ -10,6 +10,8 @@ public class Producer {
             System.exit(1);
         }
 
+
+        //endless loop
         while (true) {
             CSVUtils.getAndSendData(args[0], args[1], args[2]);
         }
