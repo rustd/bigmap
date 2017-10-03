@@ -32,6 +32,7 @@ public class CSVUtils {
 
             if (count % 2 != 0) {
                 scannedLine += " " + scanner.nextLine();
+
             }
 
             List<String> line = parseLine(scannedLine);
