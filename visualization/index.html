@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>BigDataTag</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+</head>
+<body>
+<ul id="pointsFromCenters"></ul>
+<ul id="pointsFromNode"></ul>
+<ul id="pointsFromStream"></ul>
+
+
+<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+<script>
+    var socket = io();
+
+    socket.on('centers', function(data){
+        if(data.length) {
+            console.log("centers" +data[x])
+            for(var x=0; x < data.length; x++){
+                $('#pointsFromCenters').append($('<li>').text(data[x].values));
+            }
+        }
+    });
+
+    socket.on('measurements', function(data){
+        if(data.length) {
+            for(var x=0; x < data.length; x++){
+                console.log("measurement" +data[x])
+                $('#pointsFromNode').append($('<li>').text(data[x]));
+            }
+        }
+    });
+
+    socket.on('clusters', function(data){
+        if(data.length) {
+            for(var x=0; x < data.length; x++){
+                console.log("clusters" +data[x])
+                $('#pointsFromStream').append($('<li>').text(data[x]));
+            }
+        }
+    });
+
+    socket.on('er', function(er){
+        alert(er);
+    });
+
+</script>
+</body>
+</html>
