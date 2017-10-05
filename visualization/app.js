@@ -7,14 +7,27 @@ var express = require('express'),
     io = require('socket.io')(server),
     mongo = require('mongodb').MongoClient;
 
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 80);
 
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+mongo.connect('mongodb://127.0.0.1/bigdatatag', function (err, db) {
+    if (err) throw err;
+
+    io.sockets.on('connection', function (socket) {
+
+        var collectionClusterCenters = db.collection('clusterCenters');
+
+        collectionClusterCenters.find().limit(10).toArray(function (err, res) {
+            if (err) throw err;
+            socket.emit('clusterCenters', res);
+        });
+    });
+});
 
 io.sockets.on('connection', function (socket) {
 
@@ -31,18 +44,4 @@ io.sockets.on('connection', function (socket) {
 
     });
 
-});
-
-mongo.connect('mongodb://127.0.0.1/bigdatatag', function (err, db) {
-    if (err) throw err;
-
-    io.sockets.on('connection', function (socket) {
-
-        var collectionClusterCenters = db.collection('clusterCenters');
-
-        collectionClusterCenters.find().limit(10).toArray(function (err, res) {
-            if (err) throw err;
-            socket.emit('clusterCenters', res);
-        });
-    });
 });

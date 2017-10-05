@@ -19,12 +19,14 @@ RUN yum -y install maven
 RUN mvn clean package -f /opt/bigmap/pom.xml
 WORKDIR /opt/bigmap/kafka-ingest-mongo
 RUN npm install
+WORKDIR /opt/bigmap/visualization
+RUN npm install
 WORKDIR /
 
 ENV PATH /opt/kafka/bin:/opt/zookeeper/bin:/opt/spark/bin:/opt/maven/bin:$PATH
 
+EXPOSE 80
 EXPOSE 2181
-EXPOSE 3000
 EXPOSE 4040
 EXPOSE 8888
 EXPOSE 9092
