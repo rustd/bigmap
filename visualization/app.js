@@ -4,7 +4,8 @@ var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     mubsub = require('mubsub'),
-    io = require('socket.io')(server);
+    io = require('socket.io')(server),
+    mongo = require('mongodb').MongoClient;
 
 server.listen(process.env.PORT || 3000);
 
@@ -15,21 +16,33 @@ app.get('/', function (req, res) {
 });
 
 
-var client = mubsub('mongodb://127.0.0.1/bigdatatag');
-var channel = client.channel('clusters');
+io.sockets.on('connection', function (socket) {
 
-client.on('error', console.error);
-channel.on('error', console.error);
+    var client = mubsub('mongodb://127.0.0.1/bigdatatag');
 
-channel.subscribe('document', function (message) {
-    console.log(message);
+    var channelClusters = client.channel('clusters');
 
-    io.on('connection', function (socket) {
+    client.on('error', console.error);
+    channelClusters.on('error', console.error);
 
-        // when the client emits 'new message', this listens and executes
-        socket.on('clusters', function () {
-            // we tell the client to execute 'new message'
-            socket.broadcast.emit('clusters', message);
+    channelClusters.subscribe('document', function (message) {
+        socket.emit('clusters', message);
+
+
+    });
+
+});
+
+mongo.connect('mongodb://127.0.0.1/bigdatatag', function (err, db) {
+    if (err) throw err;
+
+    io.sockets.on('connection', function (socket) {
+
+        var collectionClusterCenters = db.collection('clusterCenters');
+
+        collectionClusterCenters.find().limit(10).toArray(function (err, res) {
+            if (err) throw err;
+            socket.emit('clusterCenters', res);
         });
     });
 });

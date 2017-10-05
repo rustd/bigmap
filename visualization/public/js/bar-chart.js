@@ -1,6 +1,6 @@
-function countryCountBarChart(barChartSelector, colors) {
-  var countryCount = {};
-  var width = 1500;
+function clusterCountBarChart(barChartSelector, colors) {
+  var clusterCount = {};
+  var width = 1150;
   var height = 250;
   var transitionDuration = 500;
   var exitTransitionDuration = 500;
@@ -58,10 +58,10 @@ function countryCountBarChart(barChartSelector, colors) {
 
   function createBarChartDataSet() {
     var dataSet = [];
-    Object.keys(countryCount).forEach(function(countryCode) {
+    Object.keys(clusterCount).forEach(function(cluster) {
       dataSet.push({
-        countryCode: countryCode,
-        count: countryCount[countryCode]
+        cluster: cluster,
+        count: clusterCount[cluster]
       });
     });
     return dataSet;
@@ -86,11 +86,11 @@ function countryCountBarChart(barChartSelector, colors) {
       .attr('width', xScale.rangeBand())
       .attr('height', barHeight)
       .attr('fill', function(d) {
-        var c = colors(d.countryCode);
+        var c = colors(d.cluster);
         return d3.rgb(c).brighter(0.1);
       })
       .attr('stroke', function(d) {
-        var c = colors(d.countryCode);
+        var c = colors(d.cluster);
         return d3.rgb(c).darker(0.5);
       });
 
@@ -131,7 +131,7 @@ function countryCountBarChart(barChartSelector, colors) {
     labels.enter()
       .append('text')
       .text(function(d) {
-        return d.countryCode;
+        return d.cluster;
       })
       .attr('x', function(d, i) {
         return xScale(i) + xScale.rangeBand() / 2;
@@ -163,20 +163,20 @@ function countryCountBarChart(barChartSelector, colors) {
   }
 
   var key = function(d) {
-    return d.countryCode;
+    return d.cluster;
   };
 
   function addGeoData(data) {
-    updateCountryCount(data.countryCode);
+    updateClusterCount(data.cluster);
   }
 
-  function updateCountryCount(countryCode) {
+  function updateClusterCount(cluster) {
     var count = 0;
-    if (countryCount[countryCode]) {
-      count = countryCount[countryCode];
+    if (clusterCount[cluster]) {
+      count = clusterCount[cluster];
     }
     count += 1;
-    countryCount[countryCode] = count;
+      clusterCount[cluster] = count;
   }
 
   return {

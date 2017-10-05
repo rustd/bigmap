@@ -3,7 +3,7 @@ function worldMap(mapSelector, colors) {
 
 
   //width 1150, height 600
-  var width = 1500,
+  var width = 1150,
       height = 600,
       translate = [width / 2, height / 2];
   var projection = d3.geo.equirectangular()
@@ -64,16 +64,11 @@ function worldMap(mapSelector, colors) {
     svg.selectAll("circle.point")
       .data(geoData)
         .attr("cx", function(d) {
-          return projection([d.longitude, d.latitude])[0];
+          return projection([d.Longitude, d.Latitude])[0];
         })
         .attr("cy", function(d) {
-          return projection([d.longitude, d.latitude])[1];
-        })
-        .attr("fill", countryFill);
-  }
-
-  function countryFill(d) {
-    return colors(d.countryCode);
+          return projection([d.Longitude, d.Latitude])[1];
+        });
   }
 
   // Based on the ripples function in
@@ -89,13 +84,11 @@ function worldMap(mapSelector, colors) {
           .attr("cy", y)
           .attr("r", startPingRadius - (pingThickness / 2))
           .style("stroke-width", pingThickness / i)
-          .style('stroke', countryFill(d))
         .transition()
           .delay(Math.pow(i, 2.5) * 50)
           .duration(1000).ease('quad-in')
           .attr("r", endPingRadius)
           .style("stroke-opacity", 0)
-          .style('stroke', countryFill(d))
           .each("end", function() {
               d3.select(this).remove();
           });

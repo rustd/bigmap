@@ -62,7 +62,7 @@ public class CSVUtils {
             }
 
             //controlling the speed of flow
-            Thread.sleep(new Random().nextInt(750));
+            Thread.sleep(new Random().nextInt(50));
         }
         scanner.close();
     }
