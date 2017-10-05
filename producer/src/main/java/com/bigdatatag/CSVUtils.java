@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class CSVUtils {
@@ -60,6 +61,8 @@ public class CSVUtils {
                 KafkaSender.Sender(server, topic, jsonInString);
             }
 
+            //controlling the speed of flow
+            Thread.sleep(new Random().nextInt(750));
         }
         scanner.close();
     }

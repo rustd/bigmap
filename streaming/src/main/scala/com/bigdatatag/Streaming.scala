@@ -76,7 +76,8 @@ object Streaming extends Serializable {
           parseToDouble(z.getLongitude),
           parseToDouble(z.getValue),
           parseToDouble(z.getHeight),
-          clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
+          clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight))),
+          System.currentTimeMillis))
 
         result.map(z => Document.parse(
           "{\"key\":\"" + z._1 + "\"," +
@@ -84,7 +85,8 @@ object Streaming extends Serializable {
             "\"Longitude\":" + z._3 + ","+
             "\"Value\":" + z._4 + ","+
             "\"Height\":" + z._5 + ","+
-           "\"cluster\":" + z._6 + " "+
+            "\"cluster\":" + z._6 + ","+
+            "\"timestamp\":" + z._7 + " "+
             "}"
         )).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusters"))))
 
