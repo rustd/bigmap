@@ -12,7 +12,6 @@
     <modules>
         <module>producer</module>
         <module>streaming</module>
-        <module>visualization</module>
     </modules>
 
     <parent>

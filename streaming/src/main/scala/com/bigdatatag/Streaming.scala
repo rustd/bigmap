@@ -72,11 +72,25 @@ object Streaming extends Serializable {
 
         val filteredMeasurementRDD = measurementRDD.filter(f => f.getUnit.equals("cpm"))
 
-        val result = filteredMeasurementRDD.map(z => (z.getDeviceID + "-" + z.getCapturedTime
-          , clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight)))))
+        val result = filteredMeasurementRDD.map(z => (
+          z.getDeviceID + "-" + z.getCapturedTime,
+          parseToDouble(z.getLatitude),
+          parseToDouble(z.getLongitude),
+          parseToDouble(z.getValue),
+          parseToDouble(z.getHeight),
+          clusters.predict(Vectors.dense(parseToDouble(z.getLatitude), parseToDouble(z.getLongitude), parseToDouble(z.getValue), parseToDouble(z.getHeight))),
+          System.currentTimeMillis))
 
-        result.map(z => Document.parse("{\"_id\":\"" + z._1 +
-          "\", \"cluster\":" + z._2 + " }")).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusters"))))
+        result.map(z => Document.parse(
+          "{\"key\":\"" + z._1 + "\"," +
+            "\"Latitude\":" + z._2 + ","+
+            "\"Longitude\":" + z._3 + ","+
+            "\"Value\":" + z._4 + ","+
+            "\"Height\":" + z._5 + ","+
+            "\"cluster\":" + z._6 + ","+
+            "\"timestamp\":" + z._7 + " "+
+            "}"
+        )).saveToMongoDB(WriteConfig(Map("uri" -> mongoAddress.concat("/bigdatatag.clusters"))))
 
       }
     })
