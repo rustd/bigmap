@@ -19,10 +19,13 @@ RUN yum -y install maven
 RUN mvn clean package -f /opt/bigmap/pom.xml
 WORKDIR /opt/bigmap/kafka-ingest-mongo
 RUN npm install
+WORKDIR /opt/bigmap/visualization
+RUN npm install
 WORKDIR /
 
 ENV PATH /opt/kafka/bin:/opt/zookeeper/bin:/opt/spark/bin:/opt/maven/bin:$PATH
 
+EXPOSE 80
 EXPOSE 2181
 EXPOSE 4040
 EXPOSE 8888
@@ -32,10 +35,14 @@ EXPOSE 27017
 CMD echo "*******start******" ;\
 zkServer.sh start ;\
 `nohup /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties >> /opt/kafka/kafka_out.txt &` ;\
+sleep 3 ;\
 echo "kafka started" ;\
 kafka-topics.sh --create --topic measurement --zookeeper localhost:2181 --replication-factor 1 --partitions 1 ;\
 `nohup mongod --smallfiles >> mongod_out.txt &` ; \
+sleep 3 ;\
+mongo localhost:27017/bigdatatag /opt/bigmap/prepareMongoCollections.js ;\
 `nohup java -jar /opt/bigmap/producer/target/producer-1.0-SNAPSHOT.jar /data/fromSensor/measurements.txt localhost:9092 measurement >> producer_out.txt &`;\
 `nohup /opt/spark/bin/spark-submit --master local[*] --class com.bigdatatag.Streaming opt/bigmap/streaming/target/streaming-1.0-SNAPSHOT-jar-with-dependencies.jar localhost:9092 measurement /data/fromSensor/measurements.txt mongodb://127.0.0.1:27017 >> spark_out.txt &`;\
-`nohup node /opt/bigmap/kafka-ingest-mongo/app.js >> node_out.txt &` ; \
+`nohup node /opt/bigmap/kafka-ingest-mongo/app.js >> node_ingest_out.txt &` ; \
+`nohup node /opt/bigmap/visualization/app.js >> node_visualization_out.txt &` ; \
 /bin/bash
