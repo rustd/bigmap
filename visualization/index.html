@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <title>BigDataTag</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <script src="/lib/d3.v3.min.js"></script>
+    <script src="/lib/topojson.v1.min.js"></script>
+    <script src="/js/map.js"></script>
+    <script src="/js/bar-chart.js"></script>
+</head>
+<body>
+
+<div id="map"></div>
+<br />
+Clusters
+<br />
+<div id="bar-chart"></div>
+<br />
+<div>Cluster Centers <br /><ul id="pointsFromCenters"></ul></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+<script>
+
+    var colors = d3.scale.category20();
+    var map = worldMap('#map', colors);
+    var barChart = clusterCountBarChart('#bar-chart', colors);
+
+
+    var socket = io();
+
+    socket.on('clusters', function (data) {
+        map.addGeoData(data);
+        barChart.addGeoData(data);
+        console.log(data);
+    });
+
+    socket.on('clusterCenters', function(data){
+        if(data.length) {
+            for(var x=0; x < data.length; x++){
+                $('#pointsFromCenters').append($('<li>').text(data[x].values));
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

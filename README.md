@@ -12,7 +12,7 @@ For running docker file, you need to install Docker
 
 **For running it :**
 
-`docker run -it -d -p 9092:9092 -p 2181:2181 -p 4040:4040 bigmap`
+`docker run -it -d -p 80:80 -p 9092:9092 -p 2181:2181 -p 4040:4040 bigmap`
 
 For attaching to terminal in container, you need to check container's id and use the attach command.
 
