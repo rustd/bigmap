@@ -13,8 +13,7 @@ RUN mv /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg
 RUN mkdir -p /data/db
 RUN mkdir -p /data/fromSensor
 RUN curl "https://api.safecast.org/system/measurements.csv" -s 2>&1 | head -300000 >> /data/fromSensor/measurements.txt
-#TODO change to master repo
-RUN git clone -b development https://github.com/sskapci/bigmap.git /opt/bigmap
+RUN git clone https://github.com/rustd/bigmap.git /opt/bigmap
 RUN yum -y install maven
 RUN mvn clean package -f /opt/bigmap/pom.xml
 WORKDIR /opt/bigmap/kafka-ingest-mongo
