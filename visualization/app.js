@@ -9,7 +9,7 @@ var express = require('express'),
 
 server.listen(process.env.PORT || 80);
 
-app.use(express.static('public'));
+app.use(express.static('/opt/bigmap/visualization/public'));
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
