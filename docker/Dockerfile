@@ -5,7 +5,7 @@ RUN rpm -ivh https://kojipkgs.fedoraproject.org//packages/http-parser/2.7.1/3.el
 RUN yum -y install wget make gcc* git java-1.8.0-openjdk-devel net-tools mongodb mongodb-server nodejs-devel npm tmux htop
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz | tar -xzf - -C /opt
 RUN wget -q -O - http://ftp.ps.pl/pub/apache/kafka/0.10.2.1/kafka_2.11-0.10.2.1.tgz | tar -xzf - -C /opt
-RUN wget -q -O - ftp://ftp.task.gda.pl/pub/www/apache/dist/spark/spark-2.1.1/spark-2.1.1-bin-hadoop2.7.tgz | tar -xzf - -C /opt
+RUN wget -q -O - https://archive.apache.org/dist/spark/spark-2.1.1/spark-2.1.1-bin-hadoop2.7.tgz | tar -xzf - -C /opt
 RUN mv /opt/zookeeper-3.4.10 /opt/zookeeper
 RUN mv /opt/kafka_2.11-0.10.2.1 /opt/kafka
 RUN mv /opt/spark-2.1.1-bin-hadoop2.7 /opt/spark
